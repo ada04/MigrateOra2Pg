@@ -1,6 +1,6 @@
-#Install VM with CentOS 9, Oracle 21c and PostgreSQL
+# Install VM with CentOS 9, Oracle 21c and PostgreSQL
 
-##Install Oracle 21c
+## Install Oracle 21c
 
 * compat-openssl10-1.0.2u-1.el9.x86_64.rpm
 * oracle-database-ee-21c-1.0-1.ol8.x86_64.rpm
