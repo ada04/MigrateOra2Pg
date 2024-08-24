@@ -265,5 +265,60 @@ Complete!
 
 ```
 
+## Install PostgreSQL 16
+
+```bash
+[root@centos9s /]# dnf install postgresql-server
+Extra Packages for Enterprise Linux 9 - x86_64                                                                         24 kB/s |  15 kB     00:00
+Extra Packages for Enterprise Linux 9 - Next - x86_64                                                                  69 kB/s |  46 kB     00:00
+Dependencies resolved.
+======================================================================================================================================================
+ Package                                       Architecture                 Version                             Repository                       Size
+======================================================================================================================================================
+Installing:
+ postgresql-server                             x86_64                       13.16-1.el9                         appstream                       5.8 M
+Installing dependencies:
+ libicu                                        x86_64                       67.1-9.el9                          baseos                          9.6 M
+ postgresql                                    x86_64                       13.16-1.el9                         appstream                       1.6 M
+ postgresql-private-libs                       x86_64                       13.16-1.el9                         appstream                       137 k
+
+Transaction Summary
+======================================================================================================================================================
+Install  4 Packages
+
+Total download size: 17 M
+Installed size: 62 M
+Is this ok [y/N]: y
+Downloading Packages:
+(1/4): postgresql-13.16-1.el9.x86_64.rpm                                                                              1.8 MB/s | 1.6 MB     00:00
+(2/4): postgresql-private-libs-13.16-1.el9.x86_64.rpm                                                                 101 kB/s | 137 kB     00:01
+(3/4): postgresql-server-13.16-1.el9.x86_64.rpm                                                                       3.4 MB/s | 5.8 MB     00:01
+(4/4): libicu-67.1-9.el9.x86_64.rpm                                                                                   2.3 MB/s | 9.6 MB     00:04
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                                 3.2 MB/s |  17 MB     00:05
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                                              1/1
+  Installing       : postgresql-private-libs-13.16-1.el9.x86_64                                                                                   1/4
+  Installing       : postgresql-13.16-1.el9.x86_64                                                                                                2/4
+  Installing       : libicu-67.1-9.el9.x86_64                                                                                                     3/4
+  Running scriptlet: postgresql-server-13.16-1.el9.x86_64                                                                                         4/4
+  Installing       : postgresql-server-13.16-1.el9.x86_64                                                                                         4/4
+  Running scriptlet: postgresql-server-13.16-1.el9.x86_64                                                                                         4/4
+  Verifying        : libicu-67.1-9.el9.x86_64                                                                                                     1/4
+  Verifying        : postgresql-13.16-1.el9.x86_64                                                                                                2/4
+  Verifying        : postgresql-private-libs-13.16-1.el9.x86_64                                                                                   3/4
+  Verifying        : postgresql-server-13.16-1.el9.x86_64                                                                                         4/4
+
+Installed:
+  libicu-67.1-9.el9.x86_64    postgresql-13.16-1.el9.x86_64    postgresql-private-libs-13.16-1.el9.x86_64    postgresql-server-13.16-1.el9.x86_64
+
+Complete!
+[root@centos9s /]# 
+```
+
 
 
