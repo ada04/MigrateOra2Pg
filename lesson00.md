@@ -320,5 +320,10 @@ Complete!
 [root@centos9s /]# 
 ```
 
+### Post Install
 
+```bash
+service postgresql initdb
+chkconfig postgresql on
+```
 
