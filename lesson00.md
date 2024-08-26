@@ -346,5 +346,18 @@ alter table scott.payments add constraint pmnt_cl_fk foreign key(client_id) refe
 alter table scott.payments add constraint pmnt_srv_fk foreign key(service_id) references scott.services(service_id);
 alter table scott.charges add constraint chg_cl_fk foreign key(client_id) references scott.clients(client_id);
 alter table scott.charges add constraint vhg_srv_fk foreign key(service_id) references scott.services(service_id);
+
+insert into scott.clients(client_id, firstname, lastname) values (1, 'Кирилл', 'Иванов');
+insert into scott.clients(client_id, firstname, lastname) values (2, 'Павел', 'Ветров');
+insert into scott.clients(client_id, firstname, lastname) values (3, 'Иван', 'Сидоров');
+insert into scott.clients(client_id, firstname, lastname) values (4, 'Артём', 'Солнцев');
+insert into scott.clients(client_id, firstname, lastname) values (5, 'Ирина', 'Авдеева');
+
+insert into scott.services(service_id, servname) values (1, 'Электроэнергия');
+insert into scott.services(service_id, servname) values (2, 'Газоснабжение');
+insert into scott.services(service_id, servname) values (3, 'ХВС');
+insert into scott.services(service_id, servname) values (4, 'ГВС');
+
+
 ```
 
