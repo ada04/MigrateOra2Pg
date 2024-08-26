@@ -323,7 +323,12 @@ Complete!
 ### Post Install
 
 ```bash
-service postgresql initdb
-chkconfig postgresql on
+#service postgresql initdb
+#chkconfig postgresql on
+initdb -D /u01/pgdata/
+pg_ctl start -D /u01/pgdata -l logfile
 ```
+
+## Load test data in Oracle
+exit
 
