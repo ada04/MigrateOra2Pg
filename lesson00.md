@@ -330,5 +330,21 @@ pg_ctl start -D /u01/pgdata -l logfile
 ```
 
 ## Load test data in Oracle
-exit
+
+```sql
+alter pluggable database pdb1 open;
+alter pluggable database pdb1 save state;
+
+create user scott identified by tiger;
+
+create table scott.clients (client_id number(2) not null, firstname varchar2(100) not null, lastname varchar2(100) not null, PRIMARY KEY (client_id));
+create table scott.services (service_id number(2) not null, servname varchar2(100) not null, PRIMARY KEY (service_id));
+create table scott.payments (pmnt_id number(4) not null, client_id number(2) not null, service_id number(2) not null, period number(6) not null, amount number(10) not null, data date default sysdate, PRIMARY KEY (pmnt_id));
+create table scott.charges (chg_id number(4) not null, client_id number(2) not null, service_id number(2) not null, period number(6) not null, amount number(10) not null, data date default sysdate, PRIMARY KEY (chg_id));
+
+alter table scott.payments add constraint pmnt_cl_fk foreign key(client_id) references scott.clients(client_id);
+alter table scott.payments add constraint pmnt_srv_fk foreign key(service_id) references scott.services(service_id);
+alter table scott.charges add constraint chg_cl_fk foreign key(client_id) references scott.clients(client_id);
+alter table scott.charges add constraint vhg_srv_fk foreign key(service_id) references scott.services(service_id);
+```
 
