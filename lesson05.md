@@ -595,5 +595,18 @@ group by lastname;
 ## CASE in PostgreSQL
 
 ```sql
-```
+select clients.lastname as lastname, payments.service_id as serv, payments.amount as amount
+from clients inner join payments on clients.client_id=payments.client_id;
 
+
+select lastname,
+    sum(case when serv = 1 then amount else 0 end)/100 as Electic_sum,
+    sum(case when serv = 2 then amount else 0 end)/100 as Gas_sum,
+    sum(case when serv = 3 then amount else 0 end)/100 as ColdWater_sum,
+    sum(case when serv = 4 then amount else 0 end)/100 as HotWater_sum
+from 
+(select clients.lastname as lastname, payments.service_id as serv, payments.amount as amount
+from clients inner join payments on clients.client_id=payments.client_id) as t
+group by lastname;
+```
+PS: В отличии от Oracle в PosgreSQL необходимо указать алиас вложенного запроса.
