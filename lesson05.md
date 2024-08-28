@@ -639,14 +639,36 @@ insert into favorite_cities values ('Астафьев','Сочи','Новоси�
 ## UNPIVOT Oracle
 
 ```sql
+select * from scott.favorite_cities;
+
+select * from scott.favorite_cities
+UNPIVOT
+(city for rank in (city_1 as 1, city_2 as 2, city_3 as 3));
 ```
 
+## UNION ALL Oracle
 
 ```sql
+with all_cities as 
+(select client_name, city_1 as city, 1 as rank from scott.favorite_cities
+ union all
+ select client_name, city_2 as city, 2 as rank from scott.favorite_cities
+ union all
+ select client_name, city_3 as city, 3 as rank from scott.favorite_cities)
+select * from all_cities order by client_name, rank;
 ```
 
+## UNION ALL PostgreSQL
 
 ```sql
+with all_cities as 
+(select client_name, city_1 as city, 1 as rank from favorite_cities
+ union all
+ select client_name, city_2 as city, 2 as rank from favorite_cities
+ union all
+ select client_name, city_3 as city, 3 as rank from favorite_cities)
+select * from all_cities order by client_name, rank;
+commit;
 ```
 
 
