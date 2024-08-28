@@ -1,6 +1,8 @@
 # PIVOT, UNPIVOT and MERGE in Oracle 21c and analogs in PostgreSQL
 
-## Load test data in Oracle
+## Load example data fot PIVOT
+
+### Load example data in Oracle
 
 ```sql
 alter pluggable database pdb1 open;
@@ -276,7 +278,7 @@ insert into scott.charges (chg_id, client_id, service_id, period, amount) values
 commit;
 ```
 
-## Load test data in PostgreSQL
+### Load example data in PostgreSQL
 
 ```sql
 create table clients (client_id int2 not null, firstname varchar(100) not null, lastname varchar(100) not null, PRIMARY KEY (client_id));
@@ -610,3 +612,49 @@ from clients inner join payments on clients.client_id=payments.client_id) as t
 group by lastname;
 ```
 PS: В отличии от Oracle в PosgreSQL необходимо указать алиас вложенного запроса.
+
+## Load example data for UNPIVOT
+
+### Load in Oracle DB
+
+```sql
+create table scott.favorite_cities (client_name varchar2(100) not null, city_1 varchar2(100), city_2 varchar2(100), city_3 varchar2(100));
+insert into scott.favorite_cities values ('Савельев','Москва','Сочи','Санкт-Петербург');
+insert into scott.favorite_cities values ('Ветров','Омск','Новосибирск','Иркутск');
+insert into scott.favorite_cities values ('Липатов','Санкт-Петербург','Иркутск','Сочи');
+insert into scott.favorite_cities values ('Астафьев','Сочи','Новосибирск','Москва');
+commit;
+```
+
+### Load in PostgreSQL
+
+```sql
+create table favorite_cities (client_name varchar(100) not null, city_1 varchar(100), city_2 varchar(100), city_3 varchar(100));
+insert into favorite_cities values ('Савельев','Москва','Сочи','Санкт-Петербург');
+insert into favorite_cities values ('Ветров','Омск','Новосибирск','Иркутск');
+insert into favorite_cities values ('Липатов','Санкт-Петербург','Иркутск','Сочи');
+insert into favorite_cities values ('Астафьев','Сочи','Новосибирск','Москва');
+```
+
+## UNPIVOT Oracle
+
+```sql
+```
+
+
+```sql
+```
+
+
+```sql
+```
+
+
+```sql
+```
+
+
+```sql
+```
+
+
