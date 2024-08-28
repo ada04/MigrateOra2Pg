@@ -641,7 +641,7 @@ insert into favorite_cities values ('Астафьев','Сочи','Новоси�
 ```sql
 select * from scott.favorite_cities;
 
-select * from scott.favorite_cities
+select client_name, city, rank from scott.favorite_cities
 UNPIVOT
 (city for rank in (city_1 as 1, city_2 as 2, city_3 as 3));
 ```
@@ -671,12 +671,17 @@ select * from all_cities order by client_name, rank;
 commit;
 ```
 
+## Настройки sqlplus для красивого вывода
 
 ```sql
-```
-
-
-```sql
+SET PAGESIZE 1000
+SET LINESIZE 200
+col lastname format a10
+col client_name format a15
+col city format a15
+col city_1 format a15
+col city_2 format a15
+col city_3 format a15
 ```
 
 
