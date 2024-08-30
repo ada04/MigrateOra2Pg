@@ -766,6 +766,24 @@ Plan hash value: 1455264812
 #### Plans CASE PostgreSQL
 
 ```sql
+explain
+select lastname,
+    sum(case when serv = 1 then amount else 0 end)/100 as Electic_sum,
+    sum(case when serv = 2 then amount else 0 end)/100 as Gas_sum,
+    sum(case when serv = 3 then amount else 0 end)/100 as ColdWater_sum,
+    sum(case when serv = 4 then amount else 0 end)/100 as HotWater_sum
+from 
+(select clients.lastname as lastname, payments.service_id as serv, payments.amount as amount
+from clients inner join payments on clients.client_id=payments.client_id) as t
+group by lastname;
+
+HashAggregate  (cost=19.05..21.45 rows=120 width=250)
+  Group Key: clients.lastname
+  ->  Hash Join  (cost=13.82..16.35 rows=120 width=224)
+        Hash Cond: (payments.client_id = clients.client_id)
+        ->  Seq Scan on payments  (cost=0.00..2.20 rows=120 width=8)
+        ->  Hash  (cost=11.70..11.70 rows=170 width=220)
+              ->  Seq Scan on clients  (cost=0.00..11.70 rows=170 width=220)
 ```
 
 #### Plan for UNPIVOT Oracle
