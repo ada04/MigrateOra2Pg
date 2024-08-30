@@ -149,7 +149,7 @@ col city_3 format a15
 ```
 
 
-### Plans 
+### Plans
 
 #### Plan for PIVOT Oracle
 
@@ -159,9 +159,13 @@ select lastname, Electric_sum/100, Gas_sum/100, ColdWater_sum/100, HotWater_sum/
 select clients.lastname as lastname, payments.service_id as serv, payments.amount as amount
 from scott.clients inner join scott.payments on clients.client_id=payments.client_id) 
 PIVOT (sum(amount) sum for serv in (1 as Electric, 2 as Gas, 3 as ColdWater, 4 as HotWater));
+```
 
+```sql
 SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY(format => 'ALL'));
- 
+```
+
+```sql
 Plan hash value: 375224469
  
 -----------------------------------------------------------------------------------------------
@@ -190,9 +194,13 @@ from
 (select clients.lastname as lastname, payments.service_id as serv, payments.amount as amount
 from scott.clients inner join scott.payments on clients.client_id=payments.client_id)
 group by lastname;
+```
 
+```sql
 SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY(format => 'ALL'));
+```
 
+```sql
 Plan hash value: 1455264812
  
 ----------------------------------------------------------------------------------------------------------
@@ -224,7 +232,9 @@ from
 (select clients.lastname as lastname, payments.service_id as serv, payments.amount as amount
 from clients inner join payments on clients.client_id=payments.client_id) as t
 group by lastname;
+```
 
+```sql
 HashAggregate  (cost=19.05..21.45 rows=120 width=250)
   Group Key: clients.lastname
   ->  Hash Join  (cost=13.82..16.35 rows=120 width=224)
@@ -241,9 +251,13 @@ explain plan for
 select client_name, city, rank from scott.favorite_cities
 UNPIVOT
 (city for rank in (city_1 as 1, city_2 as 2, city_3 as 3));
+```
 
+```sql
 SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY(format => 'ALL'));
+```
 
+```sql
 Plan hash value: 638632602
  
 ---------------------------------------------------------------------------------------
@@ -267,9 +281,13 @@ with all_cities as
  union all
  select client_name, city_3 as city, 3 as rank from scott.favorite_cities)
 select * from all_cities order by client_name, rank;
+```
 
+```sql
 SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY(format => 'ALL'));
+```
 
+```sql
 Plan hash value: 1534314425
  
 ----------------------------------------------------------------------------------------
@@ -283,7 +301,6 @@ Plan hash value: 1534314425
 |   5 |     TABLE ACCESS FULL| FAVORITE_CITIES |     4 |   136 |     3   (0)| 00:00:01 |
 |   6 |     TABLE ACCESS FULL| FAVORITE_CITIES |     4 |   132 |     3   (0)| 00:00:01 |
 ----------------------------------------------------------------------------------------
- 
 ```
 
 #### Plan for UNION PostgreSQL
@@ -297,7 +314,9 @@ with all_cities as
  union all
  select client_name, city_3 as city, 3 as rank from favorite_cities)
 select * from all_cities order by client_name, rank;
+```
 
+```sql
 Sort  (cost=44.95..45.63 rows=270 width=440)
   Sort Key: favorite_cities.client_name, (1)
   ->  Append  (cost=0.00..34.05 rows=270 width=440)
