@@ -58,6 +58,8 @@ group by lastname;
 
 ## CASE in PostgreSQL
 
+### Example 1
+
 ```sql
 select clients.lastname as lastname, payments.service_id as serv, payments.amount as amount
 from clients inner join payments on clients.client_id=payments.client_id;
@@ -75,6 +77,31 @@ from clients inner join payments on clients.client_id=payments.client_id) as t
 group by lastname;
 ```
 PS: В отличии от Oracle в PosgreSQL необходимо указать алиас вложенного запроса.
+
+### Example 2
+
+```sql
+select clients.lastname as lastname, payments.service_id as serv, payments.amount as amount_pmnt, charges.amount as amount_chg
+from clients inner join payments on clients.client_id=payments.client_id
+ inner join charges  on clients.client_id=charges.client_id;
+```
+
+```sql
+select lastname,
+  	sum(case when serv = 1 then amount_pmnt else 0 end)/100 as Electic_sum_pmnt,
+    sum(case when serv = 2 then amount_pmnt else 0 end)/100 as Gas_sum_pmnt,
+    sum(case when serv = 3 then amount_pmnt else 0 end)/100 as ColdWater_sum_pmnt,
+    sum(case when serv = 4 then amount_pmnt else 0 end)/100 as HotWater_sum_pmnt,
+  	sum(case when serv = 1 then amount_chg else 0 end)/100 as Electic_sum_chg,
+    sum(case when serv = 2 then amount_chg else 0 end)/100 as Gas_sum_chg,
+    sum(case when serv = 3 then amount_chg else 0 end)/100 as ColdWater_sum_chg,
+    sum(case when serv = 4 then amount_chg else 0 end)/100 as HotWater_sum_chg
+from 
+(select clients.lastname as lastname, payments.service_id as serv, payments.amount as amount_pmnt, charges.amount as amount_chg
+from clients inner join payments on clients.client_id=payments.client_id
+ inner join charges  on clients.client_id=charges.client_id) as t
+group by lastname;
+```
 
 ## Load example data for UNPIVOT
 
