@@ -22,6 +22,14 @@ alter table scott.payments add constraint pmnt_srv_fk foreign key(service_id) re
 alter table scott.charges add constraint chg_cl_fk foreign key(client_id) references scott.clients(client_id);
 alter table scott.charges add constraint vhg_srv_fk foreign key(service_id) references scott.services(service_id);
 
+create index scott.charges_clid on scott.charges(client_id);
+create index scott.charges_servid on scott.charges(service_id);
+create index scott.charges_period on scott.charges(period);
+
+create index scott.payments_clid on scott.payments(client_id);
+create index scott.payments_servid on scott.payments(service_id);
+create index scott.payments_period on scott.payments(period);
+
 insert into scott.clients(client_id, firstname, lastname) values (1, 'Кирилл', 'Иванов');
 insert into scott.clients(client_id, firstname, lastname) values (2, 'Павел', 'Ветров');
 insert into scott.clients(client_id, firstname, lastname) values (3, 'Иван', 'Сидоров');
@@ -290,6 +298,14 @@ alter table payments add constraint pmnt_cl_fk foreign key(client_id) references
 alter table payments add constraint pmnt_srv_fk foreign key(service_id) references services(service_id);
 alter table charges add constraint chg_cl_fk foreign key(client_id) references clients(client_id);
 alter table charges add constraint vhg_srv_fk foreign key(service_id) references services(service_id);
+
+create index charges_clid on charges(client_id);
+create index charges_servid on charges(service_id);
+create index charges_period on charges(period);
+
+create index payments_clid on payments(client_id);
+create index payments_servid on payments(service_id);
+create index payments_period on payments(period);
 
 insert into clients(client_id, firstname, lastname) values (1, 'Кирилл', 'Иванов');
 insert into clients(client_id, firstname, lastname) values (2, 'Павел', 'Ветров');
@@ -683,5 +699,106 @@ col city_1 format a15
 col city_2 format a15
 col city_3 format a15
 ```
+
+
+### Plans 
+
+#### Plan for PIVOT Oracle
+
+```sql
+explain plan for 
+select lastname, Electric_sum/100, Gas_sum/100, ColdWater_sum/100, HotWater_sum/100 from (
+select clients.lastname as lastname, payments.service_id as serv, payments.amount as amount
+from scott.clients inner join scott.payments on clients.client_id=payments.client_id) 
+PIVOT (sum(amount) sum for serv in (1 as Electric, 2 as Gas, 3 as ColdWater, 4 as HotWater));
+
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY(format => 'ALL'));
+ 
+Plan hash value: 375224469
+ 
+-----------------------------------------------------------------------------------------------
+| Id  | Operation                     | Name          | Rows  | Bytes | Cost (%CPU)| Time     |
+-----------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT              |               |       |       |     7 (100)|          |
+|   1 |  HASH GROUP BY PIVOT          |               |     5 |   145 |     7  (29)| 00:00:01 |
+|   2 |   MERGE JOIN                  |               |   120 |  3480 |     6  (17)| 00:00:01 |
+|   3 |    TABLE ACCESS BY INDEX ROWID| PAYMENTS      |   120 |  1320 |     2   (0)| 00:00:01 |
+|   4 |     INDEX FULL SCAN           | PAYMENTS_CLID |   120 |       |     1   (0)| 00:00:01 |
+|*  5 |    SORT JOIN                  |               |     5 |    90 |     4  (25)| 00:00:01 |
+|   6 |     TABLE ACCESS FULL         | CLIENTS       |     5 |    90 |     3   (0)| 00:00:01 |
+-----------------------------------------------------------------------------------------------
+```
+
+#### Plan for CASE Oracle
+
+```sql
+explain plan for 
+select lastname,
+    sum(case when serv = 1 then amount else 0 end)/100 as Electic_sum,
+    sum(case when serv = 2 then amount else 0 end)/100 as Gas_sum,
+    sum(case when serv = 3 then amount else 0 end)/100 as ColdWater_sum,
+    sum(case when serv = 4 then amount else 0 end)/100 as HotWater_sum
+from 
+(select clients.lastname as lastname, payments.service_id as serv, payments.amount as amount
+from scott.clients inner join scott.payments on clients.client_id=payments.client_id)
+group by lastname;
+
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY(format => 'ALL'));
+
+Plan hash value: 1455264812
+ 
+----------------------------------------------------------------------------------------------------------
+| Id  | Operation                                | Name          | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                         |               |       |       |     6 (100)|          |
+|   1 |  HASH GROUP BY                           |               |     5 |   365 |     6  (34)| 00:00:01 |
+|   2 |   MERGE JOIN                             |               |     5 |   365 |     5  (20)| 00:00:01 |
+|   3 |    TABLE ACCESS BY INDEX ROWID           | CLIENTS       |     5 |    90 |     2   (0)| 00:00:01 |
+|   4 |     INDEX FULL SCAN                      | SYS_C006863   |     5 |       |     1   (0)| 00:00:01 |
+|*  5 |    SORT JOIN                             |               |     5 |   275 |     3  (34)| 00:00:01 |
+|   6 |     VIEW                                 | VW_GBC_5      |     5 |   275 |     2   (0)| 00:00:01 |
+|   7 |      HASH GROUP BY                       |               |     5 |    55 |     2   (0)| 00:00:01 |
+|   8 |       TABLE ACCESS BY INDEX ROWID BATCHED| PAYMENTS      |   120 |  1320 |     2   (0)| 00:00:01 |
+|   9 |        INDEX FULL SCAN                   | PAYMENTS_CLID |   120 |       |     1   (0)| 00:00:01 |
+----------------------------------------------------------------------------------------------------------
+```
+
+#### Plans CASE PostgreSQL
+
+```sql
+```
+
+#### Plan for UNPIVOT Oracle
+
+```sql
+explain plan for 
+select client_name, city, rank from scott.favorite_cities
+UNPIVOT
+(city for rank in (city_1 as 1, city_2 as 2, city_3 as 3));
+
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY(format => 'ALL'));
+
+Plan hash value: 638632602
+ 
+---------------------------------------------------------------------------------------
+| Id  | Operation           | Name            | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT    |                 |    12 |  1284 |     5   (0)| 00:00:01 |
+|*  1 |  VIEW               |                 |    12 |  1284 |     5   (0)| 00:00:01 |
+|   2 |   UNPIVOT           |                 |       |       |            |          |
+|   3 |    TABLE ACCESS FULL| FAVORITE_CITIES |     4 |   264 |     3   (0)| 00:00:01 |
+---------------------------------------------------------------------------------------
+```
+
+#### Plan for UNION Oracle
+
+```sql
+```
+
+#### Plan for UNION PostgreSQL
+
+```sql
+```
+
 
 
