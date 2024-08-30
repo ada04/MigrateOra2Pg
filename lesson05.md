@@ -684,7 +684,6 @@ with all_cities as
  union all
  select client_name, city_3 as city, 3 as rank from favorite_cities)
 select * from all_cities order by client_name, rank;
-commit;
 ```
 
 ## Настройки sqlplus для красивого вывода
@@ -811,11 +810,51 @@ Plan hash value: 638632602
 #### Plan for UNION Oracle
 
 ```sql
+explain plan for
+with all_cities as 
+(select client_name, city_1 as city, 1 as rank from scott.favorite_cities
+ union all
+ select client_name, city_2 as city, 2 as rank from scott.favorite_cities
+ union all
+ select client_name, city_3 as city, 3 as rank from scott.favorite_cities)
+select * from all_cities order by client_name, rank;
+
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY(format => 'ALL'));
+
+Plan hash value: 1534314425
+ 
+----------------------------------------------------------------------------------------
+| Id  | Operation            | Name            | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT     |                 |    12 |  1284 |    10  (10)| 00:00:01 |
+|   1 |  SORT ORDER BY       |                 |    12 |  1284 |    10  (10)| 00:00:01 |
+|   2 |   VIEW               |                 |    12 |  1284 |     9   (0)| 00:00:01 |
+|   3 |    UNION-ALL         |                 |       |       |            |          |
+|   4 |     TABLE ACCESS FULL| FAVORITE_CITIES |     4 |   128 |     3   (0)| 00:00:01 |
+|   5 |     TABLE ACCESS FULL| FAVORITE_CITIES |     4 |   136 |     3   (0)| 00:00:01 |
+|   6 |     TABLE ACCESS FULL| FAVORITE_CITIES |     4 |   132 |     3   (0)| 00:00:01 |
+----------------------------------------------------------------------------------------
+ 
 ```
 
 #### Plan for UNION PostgreSQL
 
 ```sql
+explain
+with all_cities as 
+(select client_name, city_1 as city, 1 as rank from favorite_cities
+ union all
+ select client_name, city_2 as city, 2 as rank from favorite_cities
+ union all
+ select client_name, city_3 as city, 3 as rank from favorite_cities)
+select * from all_cities order by client_name, rank;
+
+Sort  (cost=44.95..45.63 rows=270 width=440)
+  Sort Key: favorite_cities.client_name, (1)
+  ->  Append  (cost=0.00..34.05 rows=270 width=440)
+        ->  Seq Scan on favorite_cities  (cost=0.00..10.90 rows=90 width=440)
+        ->  Seq Scan on favorite_cities favorite_cities_1  (cost=0.00..10.90 rows=90 width=440)
+        ->  Seq Scan on favorite_cities favorite_cities_2  (cost=0.00..10.90 rows=90 width=440)
 ```
 
 
