@@ -2,7 +2,7 @@
 
 ## Load example data for PIVOT
 
-Скрипты для загрузки данных [1]
+[Скрипты для загрузки данных] ()
 
 
 ## PIVOT in Oracle
